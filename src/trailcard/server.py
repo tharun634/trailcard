@@ -121,7 +121,7 @@ def create_app(settings: Settings | None = None, client: OllamaClient | None = N
             (settings.photo_dir / photo_name).write_bytes(jpeg)
             verdict = check_photo(client, item["prompt"], item["hint"], jpeg)
             matches, what, ai_note = verdict["matches"], verdict["what_i_see"], verdict["note"]
-            if matches in ("yes", "partly"):
+            if matches == "yes":  # "partly" is left for the person to decide; the model only auto-ticks a clear match
                 found = True
         store.record_find(qid, item_id, found=found, note=note.strip(), photo=photo_name,
                           matches=matches, what_i_see=what, ai_note=ai_note)

@@ -127,3 +127,14 @@ def test_weather_is_opt_in(client, monkeypatch):
     assert seen == []
     q = client.post("/api/quests", json={**PLAN, "use_weather": True}).json()
     assert seen and q["meta"]["weather"]["summary"] == "rain"
+
+
+def test_partly_match_is_not_auto_ticked(client, fake):
+    fake.verdict = {"what_i_see": "Some shadows on snow.", "matches": "partly", "note": "Close."}
+    q = client.post("/api/quests", json=PLAN).json()
+    r = client.post(f"/api/quests/{q['id']}/finds", data={"item_id": "3"},
+                    files={"photo": ("x.jpg", jpeg_bytes(), "image/jpeg")}).json()
+    assert r["matches"] == "partly" and r["found"] is False
+    # ...but the person can still tick it themselves, and the photo verdict is preserved
+    r2 = client.post(f"/api/quests/{q['id']}/finds", data={"item_id": "3", "found": "true"}).json()
+    assert r2["found"] is True and r2["matches"] == "partly" and r2["photo"]

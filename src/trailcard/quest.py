@@ -47,8 +47,13 @@ SYSTEM = (
     "work in any location; never promise a specific species, trail, shop or landmark because you cannot "
     "verify the place. (2) Match the season, the habitat, the time available and the energy level. "
     "(3) Items must be safe: never ask anyone to touch, taste or pick unknown plants, mushrooms, berries "
-    "or animals. (4) Warm, specific, a little playful, never preachy. (5) Each hint is one short sentence."
+    "or animals, and never ask anyone to pick up debris, litter or unknown objects. (4) Warm, specific, a little playful, never preachy. (5) Each hint is one short, concrete "
+    "sentence that ADDS something the prompt does not (where to look, how to compare, what to notice); "
+    "never repeat the word for the sense. Example item: prompt 'Find three leaves in three different "
+    "colours', hint 'Lay them side by side on your palm and pick a favourite.', kind 'touch'."
 )
+
+_BAD_HINTS = set(KINDS) | {"none", "n/a", ""}
 
 
 @dataclass
@@ -97,7 +102,10 @@ def validate_quest(raw: dict[str, Any], n_items: int) -> dict[str, Any]:
         if not prompt:
             continue
         kind = it.get("kind") if it.get("kind") in KINDS else "look"
-        items.append({"prompt": prompt, "hint": _clean(it.get("hint"), 160), "kind": kind})
+        hint = _clean(it.get("hint"), 160)
+        if hint.lower().strip(" .!") in _BAD_HINTS or len(hint.split()) < 3:
+            hint = ""  # the model echoed the sense word instead of giving a tip; an empty hint beats a useless one
+        items.append({"prompt": prompt, "hint": hint, "kind": kind})
     if len(items) < 3:
         raise ValueError("model returned fewer than 3 usable items")
     items = items[:n_items]

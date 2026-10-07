@@ -40,3 +40,14 @@ def test_fallback_is_valid_for_every_season_and_deterministic(season):
     b = fallback_quest(_req(season=season), 6)
     assert a == b
     validate_quest(a, 6)  # a template card must itself pass validation
+
+
+def test_validate_drops_useless_echo_hints_but_keeps_real_ones():
+    raw = {"title": "T", "intro": "i", "sit_spot": "s", "safety_note": "n", "items": [
+        {"prompt": "a", "hint": "Look", "kind": "look"},
+        {"prompt": "b", "hint": "touch.", "kind": "touch"},
+        {"prompt": "c", "hint": "Check the sunny side of tree trunks.", "kind": "look"},
+        {"prompt": "d", "hint": "", "kind": "listen"},
+    ]}
+    hints = [i["hint"] for i in validate_quest(raw, 6)["items"]]
+    assert hints == ["", "", "Check the sunny side of tree trunks.", ""]
