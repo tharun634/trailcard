@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ q.title }} - Trailcard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink:#1d2b22; --moss:#3f6b4a; --paper:#fbf8f0; --line:#c9c2ae; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#e8e4d6; color:var(--ink); font:16px/1.45 Georgia, "Times New Roman", serif; }
+  .bar { max-width:8.5in; margin:12px auto; display:flex; gap:10px; justify-content:space-between; align-items:center; font:14px system-ui, sans-serif; }
+  .bar a, .bar button { color:var(--moss); background:#fff; border:1px solid var(--moss); padding:8px 14px; border-radius:8px; text-decoration:none; cursor:pointer; font:inherit; }
+  .sheet { max-width:8.5in; min-height:10in; margin:0 auto 24px; padding:.6in .7in; background:var(--paper); box-shadow:0 2px 14px #0003; }
+  h1 { font-size:30px; margin:0 0 4px; color:var(--moss); line-height:1.15; }
+  .meta { font:13px system-ui, sans-serif; color:#5b665e; margin-bottom:14px; }
+  .intro { font-size:17px; margin:0 0 18px; }
+  ol { list-style:none; margin:0; padding:0; }
+  li { display:flex; gap:14px; padding:11px 0; border-bottom:1px dashed var(--line); break-inside:avoid; }
+  .box { flex:none; width:24px; height:24px; border:2px solid var(--moss); border-radius:5px; margin-top:2px; }
+  .kind { font:11px system-ui, sans-serif; text-transform:uppercase; letter-spacing:.08em; color:#7a8a7e; }
+  .p { font-size:17px; } .hint { font-size:14px; color:#5b665e; font-style:italic; }
+  h2 { font-size:15px; text-transform:uppercase; letter-spacing:.1em; color:var(--moss); margin:22px 0 6px; font-family:system-ui, sans-serif; }
+  .notes { height:1.5in; border:1px solid var(--line); border-radius:6px; background:repeating-linear-gradient(transparent 0 27px, #e1dcc9 27px 28px); }
+  .times { display:flex; gap:28px; font:14px system-ui, sans-serif; margin-top:12px; }
+  .times span { border-bottom:1px solid var(--ink); display:inline-block; width:1.2in; }
+  .foot { margin-top:20px; font:12px system-ui, sans-serif; color:#6b756e; display:flex; justify-content:space-between; gap:12px; }
+  .safe { font:14px system-ui, sans-serif; background:#eef3e8; border-left:4px solid var(--moss); padding:8px 12px; margin-top:14px; }
+  @media print {
+    body { background:#fff; } .bar { display:none; }
+    .sheet { box-shadow:none; margin:0; max-width:none; min-height:0; padding:0; }
+    @page { margin:.5in; }
+  }
+</style>
+</head>
+<body>
+<div class="bar"><a href="/">&larr; Back to Trailcard</a><button onclick="window.print()">Print this card</button></div>
+<main class="sheet">
+  <h1>{{ q.title }}</h1>
+  <div class="meta">
+    {% if q.place %}{{ q.place }} &middot; {% endif %}{{ q.meta.date }} &middot; {{ q.meta.habitat }} &middot; about {{ q.meta.minutes }} min
+    {% if q.meta.weather %}<br>Forecast: {{ q.meta.weather.summary }}, {{ q.meta.weather.low_c }}&ndash;{{ q.meta.weather.high_c }}&deg;C, {{ q.meta.weather.rain_chance_pct }}% chance of rain{% endif %}
+    <br>{{ q.meta.sunset_note }}
+  </div>
+  <p class="intro">{{ q.intro }}</p>
+  <ol>
+  {% for it in q["items"] %}
+    <li><div class="box"></div><div><div class="kind">{{ it.kind }}</div><div class="p">{{ it.prompt }}</div>{% if it.hint %}<div class="hint">{{ it.hint }}</div>{% endif %}</div></li>
+  {% endfor %}
+  </ol>
+  <h2>Sit spot</h2>
+  <div>{{ q.sit_spot }}</div>
+  <h2>Notes</h2>
+  <div class="notes"></div>
+  <div class="times">Left at <span></span> Back at <span></span></div>
+  <div class="safe">{{ q.safety_note }}</div>
+  <div class="foot">
+    <div>Card {{ q.id }} &middot; {% if q.source == "model" %}written locally by {{ q.meta.model }}{% else %}template card (model was offline){% endif %}</div>
+    <div>Now go. The screen can wait.</div>
+  </div>
+</main>
+</body>
+</html>

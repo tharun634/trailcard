@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trailcard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>Trailcard</h1>
+  <p class="tag">Print a quest. Go outside. Come back and log it. The screen is the shortest part.</p>
+  <div id="health" class="health" role="status">Checking local model&hellip;</div>
+  <nav>
+    <button data-tab="plan" class="on">1 &middot; Plan</button>
+    <button data-tab="back">2 &middot; I'm back</button>
+    <button data-tab="journal">3 &middot; Journal</button>
+  </nav>
+</header>
+
+<main>
+<section id="plan" class="tab on">
+  <form id="plan-form">
+    <label>Where are you headed? <input id="place" maxlength="80" placeholder="e.g. Discovery Park, Seattle"></label>
+    <div class="row">
+      <label>Latitude <input id="lat" type="number" step="any" min="-90" max="90" required></label>
+      <label>Longitude <input id="lon" type="number" step="any" min="-180" max="180" required></label>
+      <button type="button" id="geo" class="ghost">Use my location</button>
+    </div>
+    <p class="small">Coordinates are only used for sun times and season. They stay on this computer.</p>
+    <div class="row">
+      <label>Habitat <select id="habitat"></select></label>
+      <label>Time <select id="minutes"><option>30</option><option selected>60</option><option>90</option><option>120</option><option>180</option></select> min</label>
+      <label>Energy <select id="energy"></select></label>
+    </div>
+    <label class="check"><input type="checkbox" id="use_weather"> Also fetch today's forecast (sends your location, rounded to ~11 km, to Open-Meteo)</label>
+    <button class="primary" id="go">Write my card</button>
+    <p id="plan-status" class="small" role="status"></p>
+  </form>
+  <article id="card-preview" hidden></article>
+</section>
+
+<section id="back" class="tab">
+  <div id="back-empty" class="small">No active card yet. Plan one first.</div>
+  <div id="back-body" hidden>
+    <h2 id="back-title"></h2>
+    <p class="small">Tick what you found. Add a photo and the local model will check it against the task.</p>
+    <ul id="items"></ul>
+    <label>Anything you want to remember? <textarea id="notes" rows="3" maxlength="600"></textarea></label>
+    <div class="row">
+      <label>Minutes outside <input id="outside" type="number" min="0" max="1440"></label>
+      <div class="small" id="screen-info"></div>
+    </div>
+    <button class="primary" id="finish">Write my journal entry</button>
+    <p id="finish-status" class="small" role="status"></p>
+    <article id="entry" hidden></article>
+  </div>
+</section>
+
+<section id="journal" class="tab">
+  <div id="totals" class="totals"></div>
+  <div id="outings"></div>
+</section>
+</main>
+<footer class="small">Runs entirely on your machine with an open-weight model (<span id="model-name">Gemma 4</span> via Ollama). No account. No cloud.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
