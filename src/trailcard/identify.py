@@ -59,7 +59,7 @@ def prepare_photo(data: bytes, max_side: int = 768) -> bytes:
 def check_photo(client: OllamaClient, prompt: str, hint: str, photo_jpeg: bytes) -> dict[str, Any]:
     user = f"Quest task: {prompt}\nHint on the card: {hint or 'none'}\nDoes the attached photo satisfy the task?"
     try:
-        out = client.chat_json(CHECK_SYSTEM, user, CHECK_SCHEMA, images=[photo_jpeg], temperature=0.2, max_tokens=300)
+        out = client.chat_json(CHECK_SYSTEM, user, CHECK_SCHEMA, images=[photo_jpeg], temperature=0.0, max_tokens=300)
     except LLMUnavailable:
         return {"what_i_see": "", "matches": "cannot_tell", "note": "The local model was not reachable, so this one is on the honour system.", "model_ok": False}
     out["matches"] = out.get("matches") if out.get("matches") in ("yes", "partly", "no", "cannot_tell") else "cannot_tell"

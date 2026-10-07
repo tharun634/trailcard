@@ -60,11 +60,13 @@ async function loadHealth() {
 }
 
 /* ---------- plan ---------- */
+const browserOffsetH = () => -new Date().getTimezoneOffset() / 60;
+$("tz").value = browserOffsetH();
 $("geo").addEventListener("click", () => {
   if (!navigator.geolocation) return ($("plan-status").textContent = "This browser has no geolocation. Type coordinates instead.");
   $("plan-status").textContent = "Asking your browser for location...";
   navigator.geolocation.getCurrentPosition(
-    (p) => { $("lat").value = p.coords.latitude.toFixed(3); $("lon").value = p.coords.longitude.toFixed(3); $("plan-status").textContent = "Got it."; },
+    (p) => { $("lat").value = p.coords.latitude.toFixed(3); $("lon").value = p.coords.longitude.toFixed(3); $("tz").value = browserOffsetH(); $("plan-status").textContent = "Got it."; },
     (e) => ($("plan-status").textContent = "Could not get location (" + e.message + "). Type coordinates instead."),
     { timeout: 10000 });
 });
@@ -79,7 +81,7 @@ $("plan-form").addEventListener("submit", async (ev) => {
       body: JSON.stringify({
         place: $("place").value, lat: parseFloat($("lat").value), lon: parseFloat($("lon").value),
         habitat: $("habitat").value, minutes: parseInt($("minutes").value, 10), energy: $("energy").value,
-        use_weather: $("use_weather").checked, utc_offset_min: -new Date().getTimezoneOffset(),
+        use_weather: $("use_weather").checked, utc_offset_min: Math.round(parseFloat($("tz").value) * 60),
       }),
     });
     setQuest(q); renderPreview(q); st.textContent = "";

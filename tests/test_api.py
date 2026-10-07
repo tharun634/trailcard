@@ -138,3 +138,19 @@ def test_partly_match_is_not_auto_ticked(client, fake):
     # ...but the person can still tick it themselves, and the photo verdict is preserved
     r2 = client.post(f"/api/quests/{q['id']}/finds", data={"item_id": "3", "found": "true"}).json()
     assert r2["found"] is True and r2["matches"] == "partly" and r2["photo"]
+
+
+def test_sunset_is_shown_in_the_offset_the_client_sends(client):
+    # Same place, same day: the clock time must follow the UTC offset (the UI sends the destination's, not the server's)
+    pdt = client.post("/api/quests", json={**PLAN, "utc_offset_min": -420}).json()["meta"]["sunset_note"]
+    ist = client.post("/api/quests", json={**PLAN, "utc_offset_min": 330}).json()["meta"]["sunset_note"]
+    assert "18:3" in pdt and "07:0" in ist and pdt != ist
+
+
+def test_photo_check_is_greedy_but_creative_steps_are_not(client, fake):
+    q = client.post("/api/quests", json=PLAN).json()
+    client.post(f"/api/quests/{q['id']}/finds", data={"item_id": "1"},
+                files={"photo": ("x.jpg", jpeg_bytes(), "image/jpeg")})
+    client.post(f"/api/quests/{q['id']}/return", json={"outside_minutes": 1, "screen_seconds": 1})
+    temps = {("matches" in c["format"]["properties"]): c["options"]["temperature"] for c in fake.calls}
+    assert temps[True] == 0.0 and temps[False] > 0.5

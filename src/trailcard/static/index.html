@@ -25,9 +25,10 @@
     <div class="row">
       <label>Latitude <input id="lat" type="number" step="any" min="-90" max="90" required></label>
       <label>Longitude <input id="lon" type="number" step="any" min="-180" max="180" required></label>
+      <label>UTC offset (h) <input id="tz" type="number" step="0.25" min="-14" max="14" required title="Time zone of the place, used to show the sunset in local clock time"></label>
       <button type="button" id="geo" class="ghost">Use my location</button>
     </div>
-    <p class="small">Coordinates are only used for sun times and season. They stay on this computer.</p>
+    <p class="small">Coordinates are only used for sun times and season. They stay on this computer. The offset defaults to this computer's time zone; change it if you are planning a trip elsewhere.</p>
     <div class="row">
       <label>Habitat <select id="habitat"></select></label>
       <label>Time <select id="minutes"><option>30</option><option selected>60</option><option>90</option><option>120</option><option>180</option></select> min</label>
